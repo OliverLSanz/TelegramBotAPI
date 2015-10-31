@@ -13,15 +13,14 @@ import javax.json.*;
   */
 public class TelegramBot {
 
-	private ArrayList<TelegramMsg> results;
+	private ArrayList<TelegramMsg> msgs;
 	private Iterator<TelegramMsg> msgQueue;
 	private int msgOffSet;
 	// private String botId;
 	
-	// Needs for a better way to initialize msgOffSet
 	public TelegramBot(){
 	//	this.botId = botId;
-		results = new ArrayList<TelegramMsg>();
+		msgs = new ArrayList<TelegramMsg>();
 		getMessages(10);
 		msgOffSet = 0;
 	}
@@ -55,14 +54,12 @@ public class TelegramBot {
 	 */
 	public TelegramMsg nextMsg(int waitTime) throws Exception{
 		if(!msgQueue.hasNext()){
-			results.clear();
+			msgs.clear();
 			getMessages(waitTime);
 		}
 		return msgQueue.next();
 	}
-	
-	// Has to control possible exceptions i.e. connection errors.
-	// Needs improvement on msfOffSet update.
+
 	/**
 	 * Fills msgQueue;
 	 */
@@ -77,12 +74,17 @@ public class TelegramBot {
 			JsonObject obj = rdr.readObject();
 			JsonArray resultsx = obj.getJsonArray("result");
 			for (JsonObject result : resultsx.getValuesAs(JsonObject.class)) {
-				results.add(new TelegramMsg(result.getJsonObject("message")));
+				msgs.add(new TelegramMsg(result.getJsonObject("message")));
 				msgOffSet = result.getInt("update_id") + 1;
 			}
-			msgQueue = results.iterator();
+			msgQueue = msgs.iterator();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+	
+	public void throwMessages(){
+		getMessages(0);
+		msgs.clear();
 	}
 }
