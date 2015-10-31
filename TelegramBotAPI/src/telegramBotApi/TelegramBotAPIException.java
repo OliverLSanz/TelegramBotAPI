@@ -1,3 +1,4 @@
+package telegramBotApi;
 
 public class TelegramBotAPIException extends Exception {
 
