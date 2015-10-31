@@ -8,8 +8,8 @@ import java.util.Iterator;
 import javax.json.*;
  
 /**
-  * @author Óliver Sanz San José
-  * @version 1.0.0
+  * @author		Óliver Sanz San José
+  * @version	1.0.0
   */
 public class TelegramBot {
 
