@@ -136,7 +136,7 @@ public class TelegramBot {
 	  * 
 	  * @return ~
 	  */
-	public boolean Failed(){
+	public boolean failed(){
 		return failed;
 	}
 }
