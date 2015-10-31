@@ -16,23 +16,30 @@ public class TelegramBot {
 	private ArrayList<TelegramMsg> msgs;
 	private Iterator<TelegramMsg> msgQueue;
 	private int msgOffSet;
-	// private String botId;
+	private final String botUrl;
 	
-	public TelegramBot(){
-	//	this.botId = botId;
+	/**
+	 * Initializes the bot with its id.
+	 * 
+	 * @param	botId	the id of the bot, as given by BotFather.
+	 */
+	public TelegramBot(String botId){
+		// Creates the URL that will be used for the requests to the Telegram bot API
+	  	botUrl = "https://api.telegram.org/bot" + botId + "/";
+	  	// Initialises the ArrayList and Iterator for the fetched messages.
 		msgs = new ArrayList<TelegramMsg>();
-		getMessages(10);
-		msgOffSet = 0;
+		msgQueue = msgs.iterator();
 	}
 	
 	/**
 	 * Sends a text to a chat.
-	 * @param text to send encoded in utf-8
-	 * @param chatId is the id of the chat where the text will be sent
-	 * @throws UnsupportedEncodingException 
+	 * 
+	 * @param	text to send encoded in utf-8
+	 * @param	chatId is the id of the chat where the text will be sent
+	 * @throws	UnsupportedEncodingException
 	 */
 	public void sendText(String text, int chatId) throws UnsupportedEncodingException{
-		String urlString = "https://api.telegram.org/bot137720988:AAHvm9h_RSjiM7klwLZLeuBh-w2scQqJoCI/sendmessage?chat_id="+
+		String urlString = botUrl +"sendmessage?chat_id="+
 			 chatId+"&text="+URLEncoder.encode(text, "UTF-8");
 		
 		try {
@@ -66,9 +73,7 @@ public class TelegramBot {
 	public void getMessages(int waitTime){
 		URL url;
 		try {
-
-			url = new URL("https://api.telegram.org/bot137720988:AAHvm9h_RSjiM7klwLZLeuBh-w2scQqJoCI/" +
-					"getupdates?timeout="+waitTime+"&offset="+msgOffSet);
+			url = new URL(botUrl + "getupdates?timeout="+waitTime+"&offset=" + msgOffSet);
 			InputStream is = url.openStream();
 			JsonReader rdr = Json.createReader(is);
 			JsonObject obj = rdr.readObject();
