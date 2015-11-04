@@ -42,7 +42,7 @@ public class TelegramBot {
 	 * @param	chatId is the id of the chat where the text will be sent
 	 * @throws	UnsupportedEncodingException
 	 */
-	public void sendText(String text, int chatId) throws UnsupportedEncodingException{
+	public void sendText(String text, int chatId){
 		try {
 			failed = false;
 			
