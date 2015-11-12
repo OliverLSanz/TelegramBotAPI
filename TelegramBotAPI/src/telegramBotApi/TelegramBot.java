@@ -18,7 +18,6 @@ public class TelegramBot {
 	private Iterator<TelegramMsg> msgQueue;
 	private int msgOffSet;
 	private final String botUrl;
-	private boolean failed;
 	
 	/**
 	 * Initializes the bot with its id.
@@ -31,8 +30,6 @@ public class TelegramBot {
 	  	// Initialises the ArrayList and Iterator for the fetched messages.
 		msgs = new ArrayList<TelegramMsg>();
 		msgQueue = msgs.iterator();
-		// failed is true by default
-		failed = true;
 	}
 	
 	/**
@@ -40,12 +37,12 @@ public class TelegramBot {
 	 * 
 	 * @param	text to send encoded in utf-8
 	 * @param	chatId is the id of the chat where the text will be sent
+	 * @return	true if everything went as expected, false, if an error
+	 * 			occurred.
 	 * @throws	UnsupportedEncodingException
 	 */
-	public void sendText(String text, int chatId){
+	public boolean sendText(String text, int chatId){
 		try {
-			failed = false;
-			
 			String urlString = botUrl +"sendmessage?chat_id="+
 			 chatId+"&text=" + URLEncoder.encode(text, "UTF-8");
 			
@@ -54,19 +51,19 @@ public class TelegramBot {
 			if(!rdr.readObject().getBoolean("ok")){
 				throw new TelegramBotAPIException();
 			}
-			
+			return true;
 		} catch (MalformedURLException e) {
-			failed = true;
 			e.printStackTrace();
+			return false;
 		} catch (UnsupportedEncodingException e){
-			failed = true;
 			e.printStackTrace();
+			return false;
 		} catch (IOException e){
-			failed = true;
 			e.printStackTrace();
+			return false;
 		} catch (TelegramBotAPIException e){
-			failed = true;
 			e.printStackTrace();
+			return false;
 		}
 	}
 	
@@ -85,15 +82,18 @@ public class TelegramBot {
 	 * @throws IOException
 	 * @throws TelegramBotAPIException 
 	 */
-	private JsonValue request(String request) 
-			throws MalformedURLException, IOException, TelegramBotAPIException{
+	private JsonValue request(String request){
+		try{
 			InputStream is = new URL(botUrl + request).openStream();
 			JsonReader rdr = Json.createReader(is);
 			if(!rdr.readObject().getBoolean("ok")){
 				throw new TelegramBotAPIException();
 			}
-			//return rdr.readObject().get("result");
 			return rdr.readObject().get("result");
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	/**
@@ -104,18 +104,16 @@ public class TelegramBot {
 	 * @return the first unreturned message
 	 */
 	public TelegramMsg nextMsg(int waitTime){
-		failed = false;
+		boolean failed;
 		
 		try{
 			if(!msgQueue.hasNext()){
 				msgs.clear();
-				getMessages(waitTime);
+				failed = !getMessages(waitTime);
 				if(failed) throw new Exception();
 			}
 			return msgQueue.next();
-			
 		} catch(Exception e){
-			failed = true;
 			return null;
 		}
 	}
@@ -123,9 +121,7 @@ public class TelegramBot {
 	/**
 	 * Fills msgQueue;
 	 */
-	public void getMessages(int waitTime){
-		failed = false;
-		
+	public boolean getMessages(int waitTime){
 		try {
 			URL url = new URL(botUrl + "getupdates?timeout=" + waitTime + "&offset=" + msgOffSet);
 			InputStream is = url.openStream();
@@ -137,32 +133,20 @@ public class TelegramBot {
 				msgOffSet = result.getInt("update_id") + 1;
 			}
 			msgQueue = msgs.iterator();
-			
+			return true;
 		}catch(Exception e){
 			e.printStackTrace();
-			failed = true;
+			return false;
 		}
 	}
 	
-	public void throwMessages(){
-		failed = false;
-		
+	public boolean throwMessages(){
 		try{
-			getMessages(0);
-			if(failed) throw new Exception();
+			if(!getMessages(0)) throw new Exception();
 			msgs.clear();
-			
+			return true;
 		}catch(Exception e){
-			failed = true;
+			return false;
 		}
-	}
-	
-	 /**
-	  * Return true if the last called method failed to be completely executed.
-	  * 
-	  * @return ~
-	  */
-	public boolean failed(){
-		return failed;
 	}
 }
