@@ -71,6 +71,32 @@ public class TelegramBot {
 	}
 	
 	/**
+	 * Sends the specified request to the bot, and returns a JsonValue 
+	 * that contains the response of the Telegram Bot API. The request
+	 * is specified trough a String that contains the method and arguments
+	 * part of a normal https request to the API.
+	 * 
+	 * Example of argument's string:
+	 * 		"getUpdates"
+	 * 
+	 * @param	request
+	 * @return
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 * @throws TelegramBotAPIException 
+	 */
+	private JsonValue request(String request) 
+			throws MalformedURLException, IOException, TelegramBotAPIException{
+			InputStream is = new URL(botUrl + request).openStream();
+			JsonReader rdr = Json.createReader(is);
+			if(!rdr.readObject().getBoolean("ok")){
+				throw new TelegramBotAPIException();
+			}
+			//return rdr.readObject().get("result");
+			return rdr.readObject().get("result");
+	}
+	
+	/**
 	 * It gets the first unseen message sent to the bot as a TelegramMsg, if there is none,
 	 * it waits some time for one to arrive.
 	 * 
