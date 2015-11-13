@@ -86,14 +86,32 @@ public class TelegramBot {
 		try{
 			InputStream is = new URL(botUrl + request).openStream();
 			JsonReader rdr = Json.createReader(is);
-			if(!rdr.readObject().getBoolean("ok")){
+			JsonObject object = rdr.readObject();
+			if(!object.getBoolean("ok")){
 				throw new TelegramBotAPIException();
 			}
-			return rdr.readObject().get("result");
-		}catch(Exception e){
+			JsonValue result = object.get("result");
+			return result;
+			
+		}catch(MalformedURLException e){
+			e.printStackTrace();
+			return null;
+		}catch(TelegramBotAPIException e){
+			e.printStackTrace();
+			return null;
+		}catch(IOException e){
 			e.printStackTrace();
 			return null;
 		}
+
+	}
+	
+	public boolean sendText(String text, TelegramChat chat, TelegramKeyboard keyboard){
+		if(request("sendmessage?chat_id=" + chat.getId() + "&text=" + text + 
+				"&reply_markup=" + keyboard.toString()) == null)
+			return false;
+		else
+			return true;
 	}
 	
 	/**
