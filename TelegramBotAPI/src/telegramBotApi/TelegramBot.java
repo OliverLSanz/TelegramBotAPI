@@ -42,29 +42,10 @@ public class TelegramBot {
 	 * @throws	UnsupportedEncodingException
 	 */
 	public boolean sendText(String text, TelegramChat chat){
-		try {
-			String urlString = botUrl +"sendmessage?chat_id="+
-			chat.getId() +"&text=" + URLEncoder.encode(text, "UTF-8");
-			
-			InputStream is = new URL(urlString).openStream();
-			JsonReader rdr = Json.createReader(is);
-			if(!rdr.readObject().getBoolean("ok")){
-				throw new TelegramBotAPIException();
-			}
+		if(request("sendmessage?chat_id=" + chat.getId() + "&text=" + text) == null)
+			return false;
+		else
 			return true;
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			return false;
-		} catch (UnsupportedEncodingException e){
-			e.printStackTrace();
-			return false;
-		} catch (IOException e){
-			e.printStackTrace();
-			return false;
-		} catch (TelegramBotAPIException e){
-			e.printStackTrace();
-			return false;
-		}
 	}
 	
 	/**
@@ -141,12 +122,9 @@ public class TelegramBot {
 	 */
 	public boolean getMessages(int waitTime){
 		try {
-			URL url = new URL(botUrl + "getupdates?timeout=" + waitTime + "&offset=" + msgOffSet);
-			InputStream is = url.openStream();
-			JsonReader rdr = Json.createReader(is);
-			JsonObject obj = rdr.readObject();
-			JsonArray resultsx = obj.getJsonArray("result");
-			for (JsonObject result : resultsx.getValuesAs(JsonObject.class)) {
+			JsonValue response = request("getupdates?timeout=" + waitTime + "&offset=" + msgOffSet);
+			JsonArray updates = (JsonArray)response;
+			for (JsonObject result : updates.getValuesAs(JsonObject.class)) {
 				msgs.add(new TelegramMsg(result.getJsonObject("message")));
 				msgOffSet = result.getInt("update_id") + 1;
 			}

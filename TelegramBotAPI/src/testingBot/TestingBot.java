@@ -11,7 +11,7 @@ public class TestingBot {
 		TelegramKeyboard keyb = new TelegramKeyboard(key, false, true, false);
 		while(true){
 			while((msg = bot.nextMsg(10)) == null){}
-			while(!bot.sendText("Holahola", msg.getChat(), keyb)){}
+			while(!bot.sendText("Holaholas", msg.getChat(), keyb)){}
 		}
 	}
 }
