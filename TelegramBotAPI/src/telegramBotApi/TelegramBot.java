@@ -41,10 +41,10 @@ public class TelegramBot {
 	 * 			occurred.
 	 * @throws	UnsupportedEncodingException
 	 */
-	public boolean sendText(String text, int chatId){
+	public boolean sendText(String text, TelegramChat chat){
 		try {
 			String urlString = botUrl +"sendmessage?chat_id="+
-			 chatId+"&text=" + URLEncoder.encode(text, "UTF-8");
+			chat.getId() +"&text=" + URLEncoder.encode(text, "UTF-8");
 			
 			InputStream is = new URL(urlString).openStream();
 			JsonReader rdr = Json.createReader(is);
