@@ -120,7 +120,7 @@ public class TelegramBot {
 	/**
 	 * It gets the first unseen message sent to the bot as a TelegramMsg.
 	 * 
-	 * @return the first unreturned message
+	 * @return the first unreturned message, null if there is none.
 	 */
 	public TelegramMsg nextMsg(){
 		boolean failed;
