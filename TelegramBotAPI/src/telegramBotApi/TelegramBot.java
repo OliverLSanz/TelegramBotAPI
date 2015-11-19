@@ -116,6 +116,26 @@ public class TelegramBot {
 			return null;
 		}
 	}
+	
+	/**
+	 * It gets the first unseen message sent to the bot as a TelegramMsg.
+	 * 
+	 * @return the first unreturned message
+	 */
+	public TelegramMsg nextMsg(){
+		boolean failed;
+		
+		try{
+			if(!msgQueue.hasNext()){
+				msgs.clear();
+				failed = !getMessages(0);
+				if(failed) throw new Exception();
+			}
+			return msgQueue.next();
+		} catch(Exception e){
+			return null;
+		}
+	}
 
 	/**
 	 * Fills msgQueue;
