@@ -97,6 +97,13 @@ public class TelegramBot {
 			return true;
 	}
 	
+	/**
+	 * Sends a {@code TelegramSMsg}
+	 * 
+	 * @param smsg the message to send.
+	 * @return 	{@code true}	if the sending was successful
+	 * 			{@code false}	otherwise.
+	 */
 	public boolean sendMessage(TelegramSMsg smsg){
 		if(request("sendmessage?chat_id=" + smsg.getDestination().getId() + 
 				"&text=" + smsg.getText() + "&reply_markup=" + 
