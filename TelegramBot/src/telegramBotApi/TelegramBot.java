@@ -114,6 +114,23 @@ public class TelegramBot {
 	}
 	
 	/**
+	 * Sends a list of sendable messages. If a send fails, the whole process
+	 * is stopped and false is returned.
+	 * 
+	 * @param smsgs
+	 * @return
+	 */
+	public boolean sendMessages(ArrayList<TelegramSMsg> smsgs){
+		Iterator<TelegramSMsg> iterable = smsgs.iterator();
+		while(iterable.hasNext()){
+			if(!sendMessage(iterable.next())){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
 	 * It gets the first unseen message sent to the bot as a TelegramMsg, if there is none,
 	 * it waits some time for one to arrive.
 	 * 
