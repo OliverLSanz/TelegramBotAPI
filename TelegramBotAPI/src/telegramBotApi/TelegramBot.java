@@ -9,7 +9,7 @@ import java.util.Iterator;
 import javax.json.*;
  
 /**
-  * @author	Óliver Luis Sanz San José
+  * @author	Oliver Luis Sanz San Jose
   * @version 1.0.0
   */
 public class TelegramBot {
