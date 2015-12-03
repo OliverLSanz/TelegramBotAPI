@@ -12,10 +12,10 @@ import javax.json.*;
   * @author	Oliver Luis Sanz San Jose
   * @version 1.0.0
   */
-public class TelegramBot {
+public class TBot {
 
-	private ArrayList<TelegramMsg> msgs;
-	private Iterator<TelegramMsg> msgQueue;
+	private ArrayList<TMessage> msgs;
+	private Iterator<TMessage> msgQueue;
 	private int msgOffSet;
 	private final String botUrl;
 	
@@ -24,11 +24,11 @@ public class TelegramBot {
 	 * 
 	 * @param	botId	the id of the bot, as given by BotFather.
 	 */
-	public TelegramBot(String botId){
+	public TBot(String botId){
 		// Creates the URL that will be used for the requests to the Telegram bot API
 	  	botUrl = "https://api.telegram.org/bot" + botId + "/";
 	  	// Initialises the ArrayList and Iterator for the fetched messages.
-		msgs = new ArrayList<TelegramMsg>();
+		msgs = new ArrayList<TMessage>();
 		msgQueue = msgs.iterator();
 	}
 	
@@ -41,7 +41,7 @@ public class TelegramBot {
 	 * 			occurred.
 	 * @throws	UnsupportedEncodingException
 	 */
-	public boolean sendText(String text, TelegramChat chat){
+	public boolean sendText(String text, TChat chat){
 		if(request("sendmessage?chat_id=" + chat.getId() + "&text=" + text) == null)
 			return false;
 		else
@@ -63,7 +63,7 @@ public class TelegramBot {
 	 * 			of getUpdates request. 
 	 * @throws MalformedURLException
 	 * @throws IOException
-	 * @throws TelegramBotAPIException 
+	 * @throws TBotAPIException 
 	 */
 	private JsonValue request(String request){
 		try{
@@ -71,7 +71,7 @@ public class TelegramBot {
 			JsonReader rdr = Json.createReader(is);
 			JsonObject object = rdr.readObject();
 			if(!object.getBoolean("ok")){
-				throw new TelegramBotAPIException();
+				throw new TBotAPIException();
 			}
 			JsonValue result = object.get("result");
 			return result;
@@ -79,7 +79,7 @@ public class TelegramBot {
 		}catch(MalformedURLException e){
 			e.printStackTrace();
 			return null;
-		}catch(TelegramBotAPIException e){
+		}catch(TBotAPIException e){
 			e.printStackTrace();
 			return null;
 		}catch(IOException e){
@@ -89,7 +89,7 @@ public class TelegramBot {
 
 	}
 	
-	public boolean sendText(String text, TelegramChat chat, TelegramKeyboard keyboard){
+	public boolean sendText(String text, TChat chat, TKeyboard keyboard){
 		if(request("sendmessage?chat_id=" + chat.getId() + "&text=" + text + 
 				"&reply_markup=" + keyboard.toString()) == null)
 			return false;
@@ -104,7 +104,7 @@ public class TelegramBot {
 	 * @return 	{@code true}	if the sending was successful
 	 * 			{@code false}	otherwise.
 	 */
-	public boolean sendMessage(TelegramSMsg smsg){
+	public boolean sendMessage(TSendableMessage smsg){
 		if(request("sendmessage?chat_id=" + smsg.getDestination().getId() + 
 				"&text=" + smsg.getText() + "&reply_markup=" + 
 				smsg.getKeyboard()) == null)
@@ -120,8 +120,8 @@ public class TelegramBot {
 	 * @param smsgs
 	 * @return
 	 */
-	public boolean sendMessages(ArrayList<TelegramSMsg> smsgs){
-		Iterator<TelegramSMsg> iterable = smsgs.iterator();
+	public boolean sendMessages(ArrayList<TSendableMessage> smsgs){
+		Iterator<TSendableMessage> iterable = smsgs.iterator();
 		while(iterable.hasNext()){
 			if(!sendMessage(iterable.next())){
 				return false;
@@ -137,7 +137,7 @@ public class TelegramBot {
 	 * @param waitTime is the seconds to wait for a new message if there is none
 	 * @return the first unreturned message
 	 */
-	public TelegramMsg nextMsg(int waitTime){
+	public TMessage nextMsg(int waitTime){
 		boolean failed;
 		
 		try{
@@ -160,7 +160,7 @@ public class TelegramBot {
 			JsonValue response = request("getupdates?timeout=" + waitTime + "&offset=" + msgOffSet);
 			JsonArray updates = (JsonArray)response;
 			for (JsonObject result : updates.getValuesAs(JsonObject.class)) {
-				msgs.add(new TelegramMsg(result.getJsonObject("message")));
+				msgs.add(new TMessage(result.getJsonObject("message")));
 				msgOffSet = result.getInt("update_id") + 1;
 			}
 			msgQueue = msgs.iterator();

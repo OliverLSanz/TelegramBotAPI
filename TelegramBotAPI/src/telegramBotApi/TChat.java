@@ -2,15 +2,15 @@ package telegramBotApi;
 
 import javax.json.JsonObject;
 
-public class TelegramChat {
+public class TChat {
 	
 	private int id;
 	
-	public TelegramChat(JsonObject jsonChat){
+	public TChat(JsonObject jsonChat){
 		id = jsonChat.getInt("id");
 	}
 	
-	public TelegramChat(int id){
+	public TChat(int id){
 		this.id = id;
 	}
 	

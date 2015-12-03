@@ -5,23 +5,23 @@ package telegramBotApi;
  * 
  * @author olisanz
  */
-public class TelegramSMsg {
+public class TSendableMessage {
 	
-	private TelegramChat destination;
+	private TChat destination;
 	private String text;
-	private TelegramKeyboard keyboard;
+	private TKeyboard keyboard;
 	
-	public TelegramSMsg(TelegramChat destination, String text){
+	public TSendableMessage(TChat destination, String text){
 		this.destination = destination;
 		this.text = text;
 	}
 	
-	public TelegramSMsg(TelegramChat destination, String text, TelegramKeyboard keyboard){
+	public TSendableMessage(TChat destination, String text, TKeyboard keyboard){
 		this(destination, text);
 		this.keyboard = keyboard;
 	}
 	
-	public TelegramChat getDestination(){
+	public TChat getDestination(){
 		return destination;
 	}
 	
@@ -29,7 +29,7 @@ public class TelegramSMsg {
 		return text;
 	}
 	
-	public TelegramKeyboard getKeyboard(){
+	public TKeyboard getKeyboard(){
 		return keyboard;
 	}
 }
