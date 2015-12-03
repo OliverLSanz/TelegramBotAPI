@@ -2,7 +2,7 @@ package telegramBotApi;
 
 import javax.json.*;
 
-public class TelegramKeyboard {
+public class TKeyboard {
 	
 	JsonObject keyboard;
 	
@@ -15,7 +15,7 @@ public class TelegramKeyboard {
 	 * @param	oneTimeKeyboard
 	 * @param	selective
 	 */
-	public TelegramKeyboard(String[][] keyboard, boolean resizeKeyboard,
+	public TKeyboard(String[][] keyboard, boolean resizeKeyboard,
 			boolean oneTimeKeyboard, boolean selective){
 		JsonArrayBuilder keyboardBuilder = Json.createArrayBuilder();
 		JsonArrayBuilder rowBuilder;

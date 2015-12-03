@@ -1,6 +1,6 @@
 package telegramBotApi;
 
-public class TelegramBotAPIException extends Exception {
+public class TBotAPIException extends Exception {
 
 	/**
 	 * 

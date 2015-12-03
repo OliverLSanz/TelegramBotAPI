@@ -2,14 +2,14 @@ package telegramBotApi;
 
 import javax.json.JsonObject;
 
-public class TelegramMsg {
+public class TMessage {
 	
-	private TelegramChat chat;
+	private TChat chat;
 	private boolean hasText;
 	private String text;
 	
-	public TelegramMsg(JsonObject jsonMessage){
-		chat = new TelegramChat(jsonMessage.getJsonObject("chat"));
+	public TMessage(JsonObject jsonMessage){
+		chat = new TChat(jsonMessage.getJsonObject("chat"));
 		try{
 			text = jsonMessage.getString("text");
 			hasText = true;
@@ -18,7 +18,7 @@ public class TelegramMsg {
 		}
 	}
 	
-	public TelegramChat getChat(){
+	public TChat getChat(){
 		return chat;
 	}
 	
