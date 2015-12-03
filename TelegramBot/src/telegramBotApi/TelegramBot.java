@@ -58,7 +58,9 @@ public class TelegramBot {
 	 * 		"getUpdates"
 	 * 
 	 * @param	request
-	 * @return
+	 * @return 	A JsonValue containing the API response. It can be a Json object
+	 * 			-i.e. in case of a sendMessage request- or a JsonArray -in case 
+	 * 			of getUpdates request. 
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 * @throws TelegramBotAPIException 
@@ -96,6 +98,39 @@ public class TelegramBot {
 	}
 	
 	/**
+	 * Sends a {@code TelegramSMsg}
+	 * 
+	 * @param smsg the message to send.
+	 * @return 	{@code true}	if the sending was successful
+	 * 			{@code false}	otherwise.
+	 */
+	public boolean sendMessage(TelegramSMsg smsg){
+		if(request("sendmessage?chat_id=" + smsg.getDestination().getId() + 
+				"&text=" + smsg.getText() + "&reply_markup=" + 
+				smsg.getKeyboard()) == null)
+			return false;
+		else
+			return true;
+	}
+	
+	/**
+	 * Sends a list of sendable messages. If a send fails, the whole process
+	 * is stopped and false is returned.
+	 * 
+	 * @param smsgs
+	 * @return
+	 */
+	public boolean sendMessages(ArrayList<TelegramSMsg> smsgs){
+		Iterator<TelegramSMsg> iterable = smsgs.iterator();
+		while(iterable.hasNext()){
+			if(!sendMessage(iterable.next())){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
 	 * It gets the first unseen message sent to the bot as a TelegramMsg, if there is none,
 	 * it waits some time for one to arrive.
 	 * 
@@ -109,26 +144,6 @@ public class TelegramBot {
 			if(!msgQueue.hasNext()){
 				msgs.clear();
 				failed = !getMessages(waitTime);
-				if(failed) throw new Exception();
-			}
-			return msgQueue.next();
-		} catch(Exception e){
-			return null;
-		}
-	}
-	
-	/**
-	 * It gets the first unseen message sent to the bot as a TelegramMsg.
-	 * 
-	 * @return the first unreturned message, null if there is none.
-	 */
-	public TelegramMsg nextMsg(){
-		boolean failed;
-		
-		try{
-			if(!msgQueue.hasNext()){
-				msgs.clear();
-				failed = !getMessages(0);
 				if(failed) throw new Exception();
 			}
 			return msgQueue.next();
